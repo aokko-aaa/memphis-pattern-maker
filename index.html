@@ -95,10 +95,83 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
 
 #ca{flex:1;display:flex;align-items:center;justify-content:center;background:#c8c8c8;background-image:linear-gradient(45deg,#bbb 25%,transparent 25%),linear-gradient(-45deg,#bbb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#bbb 75%),linear-gradient(-45deg,transparent 75%,#bbb 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;padding:20px;overflow:hidden}
 #cv{max-width:100%;max-height:100%;box-shadow:0 8px 32px rgba(0,0,0,.28)}
+
+/* ── モバイル要素（デスクトップでは非表示） ── */
+.mob-handle{display:none;width:40px;height:4px;background:#ddd;border-radius:2px;margin:10px auto 4px;flex-shrink:0}
+#mob-hdr{display:none;position:fixed;top:0;left:0;right:0;height:48px;background:#fff;border-bottom:1px solid #eee;z-index:50;align-items:center;justify-content:space-between;padding:0 16px}
+#mob-hdr-title{font-size:14px;font-weight:900;color:#111}
+#mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid #f0f0f0;z-index:50;align-items:center;padding:8px 12px;gap:8px;padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.mbb{flex:1;height:46px;border:none;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.mbb:active{transform:scale(.96)}
+.mbb-red{background:#FF6B6B;color:#fff}
+.mbb-teal{background:#4ECDC4;color:#fff}
+.mbb-gray{background:#f0f0f0;color:#333}
+#sp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:149;-webkit-tap-highlight-color:transparent}
+
+@media(max-width:768px){
+  body{overflow:hidden}
+
+  /* パネル → ボトムシート */
+  #panel{
+    width:100%!important;
+    max-height:82dvh;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    border-radius:20px 20px 0 0;
+    transform:translateY(100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    z-index:150;
+    box-shadow:0 -6px 28px rgba(0,0,0,.18);
+  }
+  #panel.sp-open{transform:translateY(0)}
+  .mob-handle{display:block}
+  #ph{padding:0 16px 0}
+  h1{display:none}
+  #sp-overlay.show{display:block}
+
+  /* キャンバスエリア */
+  #ca{
+    width:100%;height:100dvh;
+    padding:52px 6px 72px;
+  }
+
+  /* モバイルUI表示 */
+  #mob-hdr,#mob-bar{display:flex}
+
+  /* タッチしやすいサイズ */
+  .tab{padding:13px 0;font-size:13px}
+  .btn{padding:13px;font-size:13px;min-height:46px}
+  .chip{padding:6px 12px;font-size:12px}
+  .sh{padding:12px 12px}
+  .sll span,.sl-lbl span{font-size:13px}
+  .slv{font-size:13px}
+  input[type=range]{height:6px;margin:2px 0}
+  .sw{width:36px;height:36px}
+  .addsw{width:36px;height:36px}
+  .tgl{width:40px;height:22px}
+  .ttr::after{width:18px;height:18px}
+  .tgl input:checked+.ttr::after{left:20px}
+  .tgl2{width:36px;height:19px}
+  select{padding:8px;font-size:13px;min-height:40px}
+  .sico svg{width:24px;height:24px}
+  .snm{font-size:13px}
+  .cdot{width:22px;height:22px}
+}
 </style>
 </head>
 <body>
+
+<!-- モバイル：トップバー -->
+<div id="mob-hdr">
+  <span id="mob-hdr-title">Memphis Pattern Maker</span>
+  <button class="mbb mbb-red" style="flex:0 0 auto;width:80px;height:34px;font-size:11px" onclick="genNew()">🎲 生成</button>
+</div>
+
+<!-- オーバーレイ -->
+<div id="sp-overlay" onclick="togglePanel()"></div>
+
 <div id="panel">
+  <div class="mob-handle"></div>
   <div id="ph"><h1>Memphis Pattern Maker</h1></div>
   <div class="tabs">
     <button class="tab active" onclick="showTab('g',this)">全体設定</button>
@@ -239,6 +312,13 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
   </div>
 </div>
 <div id="ca"><canvas id="cv"></canvas></div>
+
+<!-- モバイル：ボトムバー -->
+<div id="mob-bar">
+  <button class="mbb mbb-red"  onclick="genNew()">🎲 生成</button>
+  <button class="mbb mbb-teal" onclick="dlPNG()">⬇ 保存</button>
+  <button class="mbb mbb-gray" onclick="togglePanel()">⚙ 設定</button>
+</div>
 
 <script>
 // =================== SHAPES DATA ===================
@@ -908,6 +988,14 @@ function dlPNG(){
 }
 
 function rndHex(){ return '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0'); }
+
+// =================== モバイルパネル ===================
+function togglePanel() {
+  const p = document.getElementById('panel');
+  const o = document.getElementById('sp-overlay');
+  const isOpen = p.classList.toggle('sp-open');
+  o.classList.toggle('show', isOpen);
+}
 
 // =================== 画像からパレット抽出 ===================
 let uploadedImg = null;
