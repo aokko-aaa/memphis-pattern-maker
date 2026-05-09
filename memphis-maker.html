@@ -324,6 +324,16 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
       <div class="sec">
         <button class="btn br" onclick="genNew()">🎲 ランダム生成</button>
         <button class="btn bt" onclick="dlPNG()">⬇ PNGダウンロード</button>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select id="recDuration" style="flex:0 0 auto;width:70px;padding:6px 4px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;background:#fff">
+            <option value="3">3秒</option>
+            <option value="5" selected>5秒</option>
+            <option value="10">10秒</option>
+            <option value="15">15秒</option>
+          </select>
+          <button id="recBtn" class="btn bp" style="flex:1;margin:0" onclick="startRecording()">🎬 動画録画</button>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px">WebM形式で保存 · 録画中は自動でアニメON</div>
       </div>
     </div>
 
@@ -339,7 +349,8 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
 <!-- モバイル：ボトムバー -->
 <div id="mob-bar">
   <button class="mbb mbb-red"  onclick="genNew()">🎲 ランダム生成</button>
-  <button class="mbb mbb-teal" onclick="dlPNG()">⬇ PNG保存</button>
+  <button class="mbb mbb-teal" onclick="dlPNG()">⬇ PNG</button>
+  <button id="recBtnMob" class="mbb" style="background:#9B59B6;color:#fff" onclick="startRecording()">🎬 録画</button>
 </div>
 
 <script>
@@ -1025,6 +1036,77 @@ function dlPNG(){
 }
 
 function rndHex(){ return '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0'); }
+
+// =================== 動画録画 ===================
+let mediaRecorder = null;
+let recChunks = [];
+let recTimer = null;
+
+function startRecording() {
+  // 録画中なら停止
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+    return;
+  }
+
+  const sec = parseInt(document.getElementById('recDuration').value);
+
+  // アニメーションが動いていなければ自動起動
+  if (!document.getElementById('animOn').checked) {
+    document.getElementById('animOn').checked = true;
+    toggleAnim();
+  }
+
+  const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+    ? 'video/webm;codecs=vp9'
+    : 'video/webm';
+
+  recChunks = [];
+  mediaRecorder = new MediaRecorder(cv.captureStream(30), { mimeType, videoBitsPerSecond: 8_000_000 });
+
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recChunks.push(e.data); };
+  mediaRecorder.onstop = () => {
+    const blob = new Blob(recChunks, { type: mimeType });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.download = 'memphis-animation.webm';
+    a.href = url;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    updateRecBtn(false, 0);
+  };
+
+  mediaRecorder.start(100);
+
+  let remaining = sec;
+  updateRecBtn(true, remaining);
+  recTimer = setInterval(() => {
+    remaining = Math.max(0, remaining - 0.1);
+    if (remaining <= 0) {
+      clearInterval(recTimer); recTimer = null;
+      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    } else {
+      updateRecBtn(true, remaining);
+    }
+  }, 100);
+}
+
+function stopRecording() {
+  if (recTimer) { clearInterval(recTimer); recTimer = null; }
+  if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+}
+
+function updateRecBtn(rec, sec) {
+  const btn  = document.getElementById('recBtn');
+  const mBtn = document.getElementById('recBtnMob');
+  if (rec) {
+    if (btn)  { btn.style.cssText  = 'background:#e53935;color:#fff;flex:1;margin:0'; btn.textContent  = `⏹ 録画中 ${sec.toFixed(1)}s`; }
+    if (mBtn) { mBtn.style.cssText = 'background:#e53935;color:#fff'; mBtn.textContent = `⏹ ${sec.toFixed(1)}s`; }
+  } else {
+    if (btn)  { btn.style.cssText  = 'flex:1;margin:0'; btn.textContent  = '🎬 動画録画'; }
+    if (mBtn) { mBtn.style.cssText = 'background:#9B59B6;color:#fff'; mBtn.textContent = '🎬 録画'; }
+  }
+}
 
 // =================== EFFECTS ===================
 function onEffectToggle(type, el) {
