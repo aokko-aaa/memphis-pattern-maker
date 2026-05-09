@@ -308,24 +308,6 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
             <span class="chip" onclick="setGlitterColor('rainbow',this)">レインボー</span>
           </div>
         </div>
-        <div class="trow" style="margin-top:4px">
-          <span>ラインストーン（宝石）</span>
-          <label class="tgl"><input type="checkbox" id="rhineOn" onchange="onEffectToggle('rhine',this)"><span class="ttr"></span></label>
-        </div>
-        <div id="rhineCfg" style="display:none">
-          <div class="slr"><div class="sll"><span>密度</span><span class="slv" id="vRD">30</span></div>
-            <input type="range" id="rhineDensity" min="5" max="150" value="30" oninput="document.getElementById('vRD').textContent=this.value;onEffectChange()"></div>
-          <div class="slr"><div class="sll"><span>サイズ</span><span class="slv" id="vRS">12</span></div>
-            <input type="range" id="rhineSize" min="4" max="40" value="12" oninput="document.getElementById('vRS').textContent=this.value;onEffectChange()"></div>
-          <div style="font-size:12px;color:#555;margin-bottom:4px">ジェムカラー</div>
-          <div class="chips" id="rhineColorChips">
-            <span class="chip active2" onclick="setRhineColor('crystal',this)">クリスタル</span>
-            <span class="chip" onclick="setRhineColor('rose',this)">ローズ</span>
-            <span class="chip" onclick="setRhineColor('sapphire',this)">サファイア</span>
-            <span class="chip" onclick="setRhineColor('emerald',this)">エメラルド</span>
-            <span class="chip" onclick="setRhineColor('amber',this)">アンバー</span>
-          </div>
-        </div>
       </div>
 
       <div class="sec">
@@ -468,7 +450,6 @@ let tileCache = null; // キャッシュ済みタイルcanvas
 
 // effects
 let glitterColor = 'gold';
-let rhineColor = 'crystal';
 let effectCache = null;
 
 // current draw context (switched for tile mode)
@@ -1046,7 +1027,7 @@ function rndHex(){ return '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).pa
 
 // =================== EFFECTS ===================
 function onEffectToggle(type, el) {
-  document.getElementById(type==='glitter' ? 'glitterCfg' : 'rhineCfg').style.display = el.checked ? 'block' : 'none';
+  document.getElementById('glitterCfg').style.display = el.checked ? 'block' : 'none';
   onEffectChange();
 }
 
@@ -1062,17 +1043,9 @@ function setGlitterColor(col, el) {
   onEffectChange();
 }
 
-function setRhineColor(col, el) {
-  rhineColor = col;
-  document.querySelectorAll('#rhineColorChips .chip').forEach(c => c.classList.remove('active2'));
-  el.classList.add('active2');
-  onEffectChange();
-}
-
 function compositeEffects() {
   const glOn = document.getElementById('glitterOn').checked;
-  const rhOn = document.getElementById('rhineOn').checked;
-  if (!glOn && !rhOn) return;
+  if (!glOn) return;
   if (!effectCache || effectCache.width !== W || effectCache.height !== H) {
     buildEffectCache();
   }
@@ -1089,33 +1062,15 @@ const GLITTER_COLS = {
   rainbow: ['#FF4444','#FF8800','#FFE000','#44CC44','#2288FF','#AA44FF','#FF44AA']
 };
 
-const RHINE_COLS = {
-  crystal:  ['#E8F0FF','#B0C8FF','#FFFFFF'],
-  rose:     ['#FF69B4','#FF1493','#FFB6C1'],
-  sapphire: ['#0055CC','#003399','#5599FF'],
-  emerald:  ['#00AA44','#006622','#55EE88'],
-  amber:    ['#FF8C00','#CC5500','#FFD700']
-};
-
 function buildEffectCache() {
   const ec = document.createElement('canvas');
   ec.width = W; ec.height = H;
   const ec_ctx = ec.getContext('2d');
 
-  if (document.getElementById('glitterOn').checked) {
-    const count = parseInt(document.getElementById('glitterDensity').value);
-    const sz    = parseInt(document.getElementById('glitterSize').value);
-    for (let i = 0; i < count; i++) {
-      drawGlitter(ec_ctx, Math.random()*W, Math.random()*H, sz*(0.5+Math.random()*0.8));
-    }
-  }
-
-  if (document.getElementById('rhineOn').checked) {
-    const count = parseInt(document.getElementById('rhineDensity').value);
-    const sz    = parseInt(document.getElementById('rhineSize').value);
-    for (let i = 0; i < count; i++) {
-      drawRhinestone(ec_ctx, Math.random()*W, Math.random()*H, sz*(0.6+Math.random()*0.7));
-    }
+  const count = parseInt(document.getElementById('glitterDensity').value);
+  const sz    = parseInt(document.getElementById('glitterSize').value);
+  for (let i = 0; i < count; i++) {
+    drawGlitter(ec_ctx, Math.random()*W, Math.random()*H, sz*(0.5+Math.random()*0.8));
   }
 
   effectCache = ec;
@@ -1147,39 +1102,6 @@ function drawGlitter(c, x, y, s) {
   c.beginPath();
   c.arc(0, 0, s*0.1, 0, Math.PI*2);
   c.fill();
-  c.restore();
-}
-
-function drawRhinestone(c, x, y, r) {
-  const cols = RHINE_COLS[rhineColor] || RHINE_COLS.crystal;
-  c.save();
-  c.translate(x, y);
-  c.globalAlpha = 0.92;
-  // Gem body — radial gradient
-  const grad = c.createRadialGradient(-r*0.25, -r*0.25, r*0.05, 0, 0, r);
-  grad.addColorStop(0,   '#FFFFFF');
-  grad.addColorStop(0.28, cols[0]);
-  grad.addColorStop(0.68, cols[1]);
-  grad.addColorStop(1,   'rgba(0,0,0,0.55)');
-  c.beginPath();
-  c.arc(0, 0, r, 0, Math.PI*2);
-  c.fillStyle = grad;
-  c.fill();
-  // Top highlight
-  const hg = c.createRadialGradient(-r*0.3, -r*0.3, 0, -r*0.3, -r*0.3, r*0.55);
-  hg.addColorStop(0,   'rgba(255,255,255,0.95)');
-  hg.addColorStop(0.5, 'rgba(255,255,255,0.3)');
-  hg.addColorStop(1,   'rgba(255,255,255,0)');
-  c.beginPath();
-  c.arc(0, 0, r, 0, Math.PI*2);
-  c.fillStyle = hg;
-  c.fill();
-  // Dark rim
-  c.beginPath();
-  c.arc(0, 0, r, 0, Math.PI*2);
-  c.strokeStyle = 'rgba(0,0,0,0.22)';
-  c.lineWidth   = 0.8;
-  c.stroke();
   c.restore();
 }
 
