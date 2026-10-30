@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>メンフィスメーカー｜my pouch</title>
 <meta name="description" content="80年代のポップな「メンフィス柄」を、ボタンひとつで作れる無料ツール。動く背景の動画も保存できます。">
-<meta name="theme-color" content="#FF6B6B">
+<meta name="theme-color" content="#fffaf1">
 <meta property="og:title" content="メンフィスメーカー">
 <meta property="og:description" content="ポップなメンフィス柄を、ボタンひとつで。画像も動く動画も保存できます。">
 <meta property="og:image" content="https://memphis.aokoworks.com/og.jpg">
@@ -171,19 +171,96 @@ select{width:100%;padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;f
   .cdot{width:22px;height:22px}
   .sec{margin-bottom:14px}
 }
+
+/* ===== ポップテーマ（共通） ===== */
+:root{
+  --cream:#fffaf1; --ink:#1f1d2b; --sub:#8a8597; --line:#efe7da;
+  --pink:#ff5fa2; --pink-soft:#fff0f7; --card:#ffffff;
+  --shadow:0 10px 30px rgba(120,90,60,.10),0 2px 6px rgba(120,90,60,.06);
+}
+html,body{background-color:var(--cream)!important;}
+body{
+  font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif!important;
+  color:var(--ink);
+  background-image:radial-gradient(#e8dcc8 1.1px,transparent 1.3px)!important;
+  background-size:20px 20px!important;
+}
+button,input,select{font-family:inherit;}
+.pop-logo{font-weight:800;letter-spacing:.02em;}
+.pop-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.pop-cloud{position:absolute;width:240px;height:240px;}
+.pop-cloud svg{width:100%;height:100%;display:block;}
+.pop-cloud.ctl{left:-70px;top:-70px;}
+.pop-cloud.ctr{right:-80px;top:-90px;}
+.pop-cloud.cbl{left:-90px;bottom:-80px;width:300px;height:300px;}
+.pop-cloud.cbl2{left:60px;bottom:-110px;}
+.pop-cloud.cbr{right:-80px;bottom:-80px;}
+.pop-bit{position:absolute;display:block;}
+.pop-bit svg{width:100%;height:100%;display:block;}
+@media(max-width:768px){
+  .pop-cloud{width:150px;height:150px;}
+  .pop-cloud.cbl{width:180px;height:180px;}
+  .pop-bit{display:none;}
+}
+@media (prefers-reduced-motion:no-preference){
+  .pop-bit{animation:popfloat 6s ease-in-out infinite alternate;}
+  .pop-bit:nth-child(odd){animation-duration:7.5s;}
+}
+@keyframes popfloat{to{translate:0 -6px;}}
+
+/* ===== メンフィスメーカー用 ===== */
+body{gap:0;}
+#panel{position:relative;z-index:2;margin:18px 0 18px 18px;height:calc(100vh - 36px);border-radius:28px;background:var(--card);box-shadow:var(--shadow);border:1.5px solid var(--line);}
+#ph{padding:20px 20px 0;}
+h1{font-size:22px!important;margin-bottom:14px!important;}
+h1 small{color:var(--sub)!important;font-weight:700;letter-spacing:.12em!important;}
+.tabs{margin:0 14px;border-bottom:none!important;background:#f6f1e8;border-radius:999px;padding:4px;gap:4px;}
+.tab{border-radius:999px;border-bottom:none!important;margin-bottom:0!important;color:var(--sub)!important;padding:8px 0!important;}
+.tab.active{background:var(--ink);color:#fff!important;}
+#pb{padding:16px 18px!important;}
+.st{color:var(--sub)!important;font-size:11px!important;letter-spacing:.08em!important;}
+.chip{border-radius:999px!important;border-color:var(--line)!important;background:#fff;}
+.chip.on,.chip.active2{background:var(--ink)!important;border-color:var(--ink)!important;color:#fff!important;}
+.sw{border-radius:10px!important;}
+input[type=color].cb{border-radius:12px!important;}
+input[type=range]{accent-color:var(--pink)!important;}
+.tgl input:checked+.ttr,.tgl2 input:checked+.ttr2{background:var(--pink)!important;}
+.btn{border-radius:999px!important;padding:12px!important;font-weight:800!important;}
+.br{background:var(--ink)!important;color:#fff!important;box-shadow:0 4px 0 #000;}
+.br:active{transform:translateY(2px)!important;box-shadow:0 2px 0 #000;}
+.bt{background:#22bfe3!important;}
+.bp{background:#a57aff!important;}
+.bg2{background:#fff!important;border:1.5px solid var(--line)!important;color:var(--ink)!important;}
+select{border-radius:999px!important;border-color:var(--line)!important;}
+#ca{position:relative;z-index:1;background:transparent!important;background-image:none!important;padding:40px!important;}
+#cv{border-radius:22px;box-shadow:var(--shadow);outline:10px solid #fff;}
+@media(max-width:768px){
+  #panel{margin:0!important;border-radius:26px 26px 0 0!important;border:none;box-shadow:0 -6px 20px rgba(120,90,60,.08)!important;height:calc(100dvh - 56px - 70px)!important;top:56px!important;}
+  #mob-hdr{background:transparent!important;border-bottom:none!important;height:56px!important;z-index:5!important;}
+  #mob-hdr-title{font-size:19px!important;}
+  #mob-preview{background:transparent!important;padding:6px 14px 10px!important;}
+  #mob-preview canvas{border-radius:16px!important;border:1.5px solid var(--line);box-shadow:none!important;}
+  #mob-bar{background:rgba(255,250,241,.95)!important;border-top:1.5px solid var(--line)!important;}
+  .mbb{border-radius:999px!important;font-weight:800!important;}
+  .mbb-red{background:var(--ink)!important;}
+  .mbb-teal{background:#22bfe3!important;}
+  #recBtnMob{background:#a57aff!important;}
+}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+<div class="pop-deco" aria-hidden="true"><div class="pop-cloud ctl"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#ffb3d6"><circle cx="40" cy="40" r="120"/><circle cx="170" cy="30" r="70"/><circle cx="60" cy="170" r="70"/><circle cx="150" cy="110" r="55"/></g></svg></div><div class="pop-cloud ctr"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#9ff0f6"><circle cx="260" cy="40" r="110"/><circle cx="140" cy="20" r="60"/><circle cx="250" cy="160" r="60"/><circle cx="180" cy="95" r="45"/></g></svg></div><div class="pop-cloud cbl"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#d6f59a"><circle cx="40" cy="260" r="130"/><circle cx="180" cy="270" r="70"/><circle cx="50" cy="120" r="70"/><circle cx="140" cy="200" r="55"/></g></svg></div><div class="pop-cloud cbl2"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#ffe782"><circle cx="150" cy="300" r="70"/><circle cx="230" cy="290" r="45"/></g></svg></div><div class="pop-cloud cbr"><svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#ffb3d6"><circle cx="260" cy="260" r="120"/><circle cx="130" cy="280" r="65"/><circle cx="270" cy="130" r="65"/><circle cx="170" cy="190" r="50"/></g></svg></div><i class="pop-bit" style="left:14%;top:30%;width:18px;height:18px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#ffc93c" d="M12 0c.8 6.4 3.6 9.6 12 12-8.4 2.4-11.2 5.6-12 12-.8-6.4-3.6-9.6-12-12C8.4 9.6 11.2 6.4 12 0z"/></svg></i><i class="pop-bit" style="left:26%;top:12%;width:14px;height:14px;transform:rotate(35deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="1" width="6" height="22" rx="3" fill="#ff7ab8"/></svg></i><i class="pop-bit" style="left:8%;top:58%;width:12px;height:12px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#7fd8f0"/></svg></i><i class="pop-bit" style="left:20%;top:82%;width:18px;height:18px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff7ab8" d="M12 0c.8 6.4 3.6 9.6 12 12-8.4 2.4-11.2 5.6-12 12-.8-6.4-3.6-9.6-12-12C8.4 9.6 11.2 6.4 12 0z"/></svg></i><i class="pop-bit" style="left:86%;top:22%;width:16px;height:16px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#b48cff" d="M12 0c.8 6.4 3.6 9.6 12 12-8.4 2.4-11.2 5.6-12 12-.8-6.4-3.6-9.6-12-12C8.4 9.6 11.2 6.4 12 0z"/></svg></i><i class="pop-bit" style="left:74%;top:9%;width:14px;height:14px;transform:rotate(-30deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="1" width="6" height="22" rx="3" fill="#ffa94d"/></svg></i><i class="pop-bit" style="left:92%;top:52%;width:12px;height:12px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ffc93c"/></svg></i><i class="pop-bit" style="left:80%;top:88%;width:18px;height:18px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#9adf5f" d="M12 0c.8 6.4 3.6 9.6 12 12-8.4 2.4-11.2 5.6-12 12-.8-6.4-3.6-9.6-12-12C8.4 9.6 11.2 6.4 12 0z"/></svg></i><i class="pop-bit" style="left:60%;top:94%;width:14px;height:14px;transform:rotate(50deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="1" width="6" height="22" rx="3" fill="#b48cff"/></svg></i><i class="pop-bit" style="left:40%;top:6%;width:10px;height:10px;transform:rotate(0deg)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#9adf5f"/></svg></i></div>
 
 <!-- モバイル：トップバー -->
 <div id="mob-hdr">
-  <span id="mob-hdr-title">メンフィスメーカー</span>
+  <span id="mob-hdr-title"><span class="pop-logo"><span style="color:#ff5fa2">メ</span><span style="color:#22bfe3">ン</span><span style="color:#ffb21f">フ</span><span style="color:#7fcf3f">ィ</span><span style="color:#a57aff">ス</span><span style="color:#ff8a3d">メ</span><span style="color:#ff5fa2">ー</span><span style="color:#22bfe3">カ</span><span style="color:#ffb21f">ー</span></span></span>
 </div>
 
 <div id="sp-overlay"></div>
 
 <div id="panel">
-  <div id="ph"><h1>メンフィスメーカー<small>MEMPHIS PATTERN MAKER</small></h1></div>
+  <div id="ph"><h1><span class="pop-logo"><span style="color:#ff5fa2">メ</span><span style="color:#22bfe3">ン</span><span style="color:#ffb21f">フ</span><span style="color:#7fcf3f">ィ</span><span style="color:#a57aff">ス</span><span style="color:#ff8a3d">メ</span><span style="color:#ff5fa2">ー</span><span style="color:#22bfe3">カ</span><span style="color:#ffb21f">ー</span></span><small>MEMPHIS PATTERN MAKER</small></h1></div>
   <!-- モバイル用インラインプレビュー（全体調整の上） -->
   <div id="mob-preview">
     <canvas id="prev-cv"></canvas>
@@ -1161,7 +1238,7 @@ function updateRecBtn(rec, sec, ready) {
     if (mBtn) { mBtn.style.cssText = 'background:#e53935;color:#fff'; mBtn.textContent = `⏹ ${sec.toFixed(1)}s`; }
   } else {
     if (btn)  { btn.style.cssText  = 'flex:1;margin:0'; btn.textContent  = '🎬 動画録画'; }
-    if (mBtn) { mBtn.style.cssText = 'background:#9B59B6;color:#fff'; mBtn.textContent = '🎬 録画'; }
+    if (mBtn) { mBtn.style.cssText = 'background:#a57aff;color:#fff'; mBtn.textContent = '🎬 録画'; }
   }
 }
 
