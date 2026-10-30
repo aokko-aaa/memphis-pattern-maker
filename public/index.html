@@ -246,6 +246,16 @@ select{border-radius:999px!important;border-color:var(--line)!important;}
   .mbb-teal{background:#22bfe3!important;}
   #recBtnMob{background:#a57aff!important;}
 }
+
+/* プリセット見本 */
+#pchips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.pgroup{grid-column:1/-1;font-size:10px;font-weight:800;color:var(--sub,#999);margin-top:4px;}
+.pcard{border:1.5px solid var(--line,#eee);background:#fff;border-radius:14px;padding:5px 5px 4px;cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:transform .12s,border-color .12s;}
+.pcard:hover{transform:translateY(-1px);border-color:#d9cdb9;}
+.pcard.on{border-color:var(--ink,#111);box-shadow:0 0 0 2px var(--ink,#111);}
+.pcard-sw{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-content:center;height:30px;border-radius:9px;padding:3px;border:1px solid rgba(0,0,0,.05);}
+.pcard-sw i{display:block;width:8px;height:8px;border-radius:50%;}
+.pcard-name{font-size:9px;letter-spacing:-.02em;font-weight:700;color:var(--ink,#333);text-align:center;white-space:nowrap;}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
 </head>
@@ -276,8 +286,8 @@ select{border-radius:999px!important;border-color:var(--line)!important;}
       <div class="sec">
         <div class="st">背景色</div>
         <div class="bgrow">
-          <input type="color" class="cb" id="bgColor" value="#FFFFFF">
-          <span class="hexlbl" id="bgHex">#FFFFFF</span>
+          <input type="color" class="cb" id="bgColor" value="#FFFAF1">
+          <span class="hexlbl" id="bgHex">#FFFAF1</span>
         </div>
       </div>
 
@@ -285,7 +295,7 @@ select{border-radius:999px!important;border-color:var(--line)!important;}
         <div class="st">カラーパレット</div>
         <!-- プリセット -->
         <div style="font-size:10px;color:#bbb;margin-bottom:4px">プリセット</div>
-        <div id="pchips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;max-height:90px;overflow-y:auto"></div>
+        <div id="pchips"></div>
         <!-- 現在のパレット -->
         <div class="pal" id="pal"></div>
         <div style="display:flex;gap:6px;margin-top:8px">
@@ -500,47 +510,31 @@ const ICONS = {
 };
 
 const PRESETS = {
-  // ── ベーシック ──
-  'クラシック': { bg:'#FFFFFF', c:['#FF6B6B','#FFE66D','#4ECDC4','#1A1A2E','#E84393','#00B4D8','#FF6B35'] },
-  'パステル':   { bg:'#FFF9F0', c:['#FFB3BA','#FFDFBA','#FFFFBA','#BAFFC9','#BAE1FF','#E8BAFF','#FFC8DD'] },
-  'ダーク':     { bg:'#1A1A2E', c:['#E94560','#F5A623','#00B4D8','#7B2D8B','#00C853','#FF6B35','#FFD700'] },
-  'モノクロ':   { bg:'#FFFFFF', c:['#000000','#222222','#555555','#888888','#BBBBBB'] },
-  'ネオン':     { bg:'#0D0D0D', c:['#FF00FF','#00FFFF','#FF0080','#80FF00','#FFFF00','#FF8000'] },
-  // ── 季節・自然 ──
-  '春桜':       { bg:'#FFF5F8', c:['#FFB7C5','#FF8FAB','#FF4D6D','#FFCAD4','#DA77A0','#F4ACB7'] },
-  '夏':         { bg:'#E8F8FF', c:['#00B4D8','#0096C7','#F77F00','#FFD166','#06D6A0','#EF476F'] },
-  '秋':         { bg:'#FFF8F0', c:['#D4572A','#E8A838','#8B4513','#CD853F','#A0522D','#D2691E'] },
-  '冬':         { bg:'#F0F6FF', c:['#4895EF','#4CC9F0','#7FC8F8','#B8D8FF','#023E8A','#90E0EF'] },
-  'サクラ夜':   { bg:'#1A0A1E', c:['#FF6B9D','#FF9AC1','#FFB3D9','#C44DA8','#7B1F5E','#FF4081'] },
-  // ── ポップ・カラフル ──
-  'キャンディ': { bg:'#FFF5FA', c:['#FF9EBB','#C8A0FF','#FFD6A5','#CAFFBF','#9BF6FF','#FFC8DD'] }, // 淡くて甘いパステルキャンディ
-  'ポップアート':{ bg:'#FFFDE7', c:['#FF0000','#FFFF00','#0000CC','#000000','#FF6600','#FFFFFF'] }, // ポップアート原色＋黒
-  'レインボー': { bg:'#FFFFFF', c:['#FF0000','#FF7700','#FFFF00','#00AA00','#0055FF','#8800CC','#FF0099'] }, // 純粋なスペクトル7色
-  // ── ナチュラル ──
-  'アース':     { bg:'#F5EFE6', c:['#8D6748','#A0785A','#C4A882','#4A7C59','#2D6A4F','#B5838D'] },
-  'ジャングル': { bg:'#F0FFF4', c:['#2ECC71','#27AE60','#1ABC9C','#F39C12','#16A085','#145A32'] },
-  'オーシャン': { bg:'#EBF8FF', c:['#0077B6','#00B4D8','#90E0EF','#023E8A','#0096C7','#48CAE4'] },
-  // ── エレガント ──
-  'ラベンダー': { bg:'#FAF5FF', c:['#9B59B6','#8E44AD','#D7BDE2','#A569BD','#6C3483','#BB8FCE'] },
-  'ロゼ':       { bg:'#FFF0F3', c:['#FF4D6D','#FF758F','#FFCCD5','#C9184A','#A4133C','#FF8FA3'] },
-  'インディゴ': { bg:'#0A0A2E', c:['#3A0CA3','#4361EE','#4CC9F0','#7209B7','#F72585','#560BAD'] },
-  // ── 昭和・平成レトロ ──
-  '昭和レトロ': { bg:'#F2E4CC', c:['#8B1A1A','#C0784A','#8B6914','#2C7744','#1A3A5C','#7B3F00'] }, // 昭和30-40年代：煉瓦・からし・深緑
-  '昭和喫茶':   { bg:'#EDE0CC', c:['#3B1A0A','#8B4513','#D4A853','#556B2F','#8B0000','#F5DEB3'] }, // 昭和の純喫茶：こげ茶・クリーム・深紅
-  'バブル':     { bg:'#FAF0FF', c:['#FF1493','#FFD700','#00CED1','#FF6347','#9400D3','#FF69B4'] }, // バブル期（昭和末〜平成初）の派手さ
-  '平成初期90s':{ bg:'#F0FFFD', c:['#00B5B8','#FF8FA3','#98D8C8','#DDA0DD','#F0E68C','#87CEEB'] }, // 90年代パステル・透明感
-  'ガーリー':   { bg:'#FFF0F8', c:['#FF69B4','#FF1493','#FFB6C1','#DA70D6','#FF85C1','#C71585'] }, // 甘くてかわいいピンク系ガーリー
-  'スポーティ': { bg:'#F0F4FF', c:['#FF3B30','#007AFF','#34C759','#FFCC00','#FF9500','#1C1C1E'] }, // スポーツブランド系のビビッド
-  '令和ミニマル':{ bg:'#F5F5F3', c:['#2C2C2C','#D4C4B0','#8B7355','#FF6B6B','#4ECDC4','#A8B5A2'] }, // 令和のアースシック
-  // ── レトロ・モダン ──
-  'ヴィンテージ':{ bg:'#F9F3E3', c:['#D4A853','#B5651D','#8B4726','#556B2F','#2E4A1E','#C4956A'] },
-  'サイバー':   { bg:'#0A0A0A', c:['#00FF9F','#00B8FF','#FF00C8','#FF7700','#CCFF00','#7700FF'] },
-  'Y2K':        { bg:'#F0E6FF', c:['#CC00FF','#FF33CC','#00CCFF','#99FF00','#FF0099','#FFCC00'] },
+  // ── ポップ ──
+  'ポップ':       { g:'ポップ',   bg:'#FFFAF1', c:['#FF5FA2','#22BFE3','#FFC93C','#7FCF3F','#A57AFF','#FF8A3D'] },
+  'クラシック':   { g:'ポップ',   bg:'#FFFFFF', c:['#FF6B6B','#FFE66D','#4ECDC4','#1A1A2E','#E84393','#00B4D8'] }, // 80年代メンフィスの王道
+  'キャンディ':   { g:'ポップ',   bg:'#FFF5FA', c:['#FF9EBB','#C8A0FF','#FFC98B','#9EE6A8','#7FD6F0','#FF7AA8'] },
+  'ゆめかわ':     { g:'ポップ',   bg:'#FDF3FF', c:['#FF8AD0','#B79CFF','#7FD8FF','#FFE16B','#FFB8DE','#9FA8FF'] },
+  // ── ビビッド ──
+  'ビタミン':     { g:'ビビッド', bg:'#FFFBE8', c:['#FF4D6D','#FF9F1C','#FFD60A','#2EC4B6','#3A86FF','#1F1D2B'] },
+  'ポップアート': { g:'ビビッド', bg:'#FFF9DB', c:['#E63946','#FFD60A','#1D4ED8','#111111','#FF7F11'] },
+  'トロピカル':   { g:'ビビッド', bg:'#F0FFF8', c:['#00C2C7','#5FD068','#FFD23F','#FF6F59','#FF3D8B','#145C5C'] },
+  'Y2K':          { g:'ビビッド', bg:'#F3E8FF', c:['#CC00FF','#FF33CC','#00CCFF','#7EE000','#FFCC00','#5B5BFF'] },
+  // ── おちついた ──
+  'くすみ':       { g:'おちついた', bg:'#F6EFE9', c:['#D8A7A0','#A9B8A2','#E3C78F','#9AA8C7','#C9A3B8','#6B5E5A'] },
+  'ミルクティー': { g:'おちついた', bg:'#F7F0E6', c:['#B89B7A','#D9C3A5','#8C6E54','#E8B4A0','#A7B29A','#4A3B30'] },
+  '北欧':         { g:'おちついた', bg:'#FBF8F2', c:['#E07A5F','#3D405B','#81B29A','#F2CC8F','#9FB4C7','#C97C8A'] },
+  'モノクロ':     { g:'おちついた', bg:'#FFFFFF', c:['#111111','#444444','#777777','#AAAAAA','#CFCFCF'] },
+  // ── 夜・レトロ ──
+  'ミッドナイト': { g:'夜・レトロ', bg:'#1F1D2B', c:['#FF5FA2','#22BFE3','#FFC93C','#7FCF3F','#A57AFF','#FFFFFF'] },
+  'ネオン':       { g:'夜・レトロ', bg:'#0D0D12', c:['#FF00E5','#00F0FF','#B6FF00','#FFE600','#FF6A00','#8A5CFF'] },
+  '昭和レトロ':   { g:'夜・レトロ', bg:'#F2E4CC', c:['#C0392B','#E8A838','#2C7744','#1A3A5C','#D4A853','#7B3F00'] },
+  '純喫茶':       { g:'夜・レトロ', bg:'#EDE0CC', c:['#3B1A0A','#8B4513','#D4A853','#556B2F','#8B0000','#C9A27E'] },
 };
 
 // =================== STATE ===================
-let colors = [...PRESETS['クラシック'].c];
-let bgColor = '#FFFFFF';
+let colors = [...PRESETS['ポップ'].c];
+let bgColor = PRESETS['ポップ'].bg;
 let W = 800, H = 600;
 
 // animation
@@ -569,13 +563,17 @@ function init() {
   cv.width = W; cv.height = H;
   gctx = ctx;
   const pc = document.getElementById('pchips');
+  let lastG = '';
   Object.keys(PRESETS).forEach(n => {
     const p=PRESETS[n];
-    const c = document.createElement('span');
-    c.className='chip';
-    c.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:3px 7px';
-    const dots=p.c.slice(0,4).map(col=>`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col}"></span>`).join('');
-    c.innerHTML=dots+`<span style="font-size:10px">${n}</span>`;
+    if (p.g !== lastG) {
+      lastG = p.g;
+      const h = document.createElement('div'); h.className='pgroup'; h.textContent=p.g; pc.appendChild(h);
+    }
+    const c = document.createElement('button');
+    c.type='button'; c.className='pcard'+(n==='ポップ'?' on':''); c.dataset.name=n;
+    const dots=p.c.slice(0,6).map(col=>`<i style="background:${col}"></i>`).join('');
+    c.innerHTML=`<span class="pcard-sw" style="background:${p.bg}">${dots}</span><span class="pcard-name">${n}</span>`;
     c.onclick = () => applyPreset(n);
     pc.appendChild(c);
   });
@@ -612,6 +610,7 @@ function renderPal() {
 
 function applyPreset(n) {
   const p=PRESETS[n]; bgColor=p.bg; colors=[...p.c];
+  document.querySelectorAll('#pchips .pcard').forEach(c=>c.classList.toggle('on', c.dataset.name===n));
   document.getElementById('bgColor').value=p.bg;
   document.getElementById('bgHex').textContent=p.bg.toUpperCase();
   renderPal(); gen();
