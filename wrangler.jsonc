@@ -1,0 +1,10 @@
+{
+  // メンフィスメーカーを Cloudflare Workers で公開するための設定
+  // 公開URL：https://memphis.aokoworks.com（予備：https://memphis-maker.aokoworks.workers.dev）
+  "name": "memphis-maker",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    // この中のファイルがそのままサイトになる
+    "directory": "./public"
+  }
+}
